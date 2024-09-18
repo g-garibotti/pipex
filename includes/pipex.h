@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:18:52 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/17 14:19:58 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/18 14:54:34 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@
 
 typedef struct s_pipex
 {
-}	t_pipex;
+	char				**args;
+	int					argc;
+	int					input_fd;
+	int					output_fd;
+	struct s_command	*next;
+}						t_pipex;
 
 #endif
