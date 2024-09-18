@@ -1,86 +1,53 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/09/17 14:06:57 by ggaribot          #+#    #+#              #
-#    Updated: 2024/09/17 14:18:56 by ggaribot         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+# Colors
+GREEN = \033[0;32m
+YELLOW = \033[0;33m
+RED = \033[0;31m
+BLUE = \033[0;34m
+RESET = \033[0m
 
-NAME            =       pipex
+NAME = pipex
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
 
-SRC_DIR         =       srcs/
+SRCS = srcs/main.c
 
-OBJ_DIR     	=   	objs/
+OBJS_DIR = objs
+OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
 
-SRCS            =       main.c
+DEPS = $(OBJS:.o=.d)
 
-vpath %.c $(SRC_DIR)
+LIBFT = libft/libft.a
 
-OBJS            =       $(patsubst %.c, $(OBJ_DIR)%.o, $(SRCS))
+all: $(NAME)
 
-CC				=       cc
+$(NAME): $(OBJS) $(LIBFT)
+	@$(CC) $(CFLAGS) $(OBJS) -Llibft -lft -o $(NAME)
+	@echo "$(BLUE)$(NAME) created!$(RESET)"
 
-CFLAGS          =       -g3 -Wall -Wextra -Werror
+$(OBJS_DIR)/%.o: %.c
+	@mkdir -p $(@D)
+	@printf "$(YELLOW)Compiling $<... $(RESET)"
+	@if $(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@ 2>/dev/null; then 		printf "$(GREEN)Done!$(RESET)\n"; 	else 		printf "$(RED)Failed!$(RESET)\n"; 		exit 1; 	fi
 
-LIB             =       libft/libft.a
-
-INCLUDES        =       -I includes/ -I libft/includes/
-
-RM				=       rm -f
-
-GREEN=\033[0;32m
-RED=\033[0;31m
-BLUE=\033[0;34m
-END=\033[0m
-BOLD_START=\e[1m
-BOLD_END=\e[0m
-
-ifeq ($(debug), true)
-        CFLAGS += -g3 -fsanitize=address,undefined
-endif
-
-define PRINT_LOADING
-        @printf "$(GREEN)Compiling libft["
-        @for i in $(shell seq 0 10 100); do \
-                printf "▓"; \
-                sleep 0.1; \
-        done
-        @printf "] 100%%$(RESET)\n$(END)"
-endef
-
-all:                    $(LIB) ${NAME}
-							@echo "$(GREEN)$(BOLD_START)${NAME} created$(BOLD_END)$(END)"
-
-${NAME}:               	${OBJS}
-							$(CC) $(CFLAGS) $(OBJS) $(LIB) -o $(NAME)
-
-$(LIB): 			   
-						@$(PRINT_LOADING) 
-						$(MAKE) --no-print-directory -C ./libft/
-
-$(OBJS):                $(OBJ_DIR)%.o: %.c
-							@echo "$(BLUE)Compiling: $@ $(END)"
-							mkdir -p $(OBJ_DIR)
-							$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+$(LIBFT):
+	@echo "$(YELLOW)Compiling libft...$(RESET)"
+	@$(MAKE) -C libft > /dev/null 2>&1
+	@echo "$(GREEN)libft compilation done!$(RESET)"
 
 clean:
-						$(RM) -r $(OBJ_DIR)
-						${RM} ${OBJS}
-						@echo "$(RED)clean libft$(END)"
-						$(MAKE) --no-print-directory clean -C ./libft/
-						@echo "$(GREEN)$(BOLD_START)Clean done$(BOLD_END)$(END)"
+	@echo "$(YELLOW)Cleaning up...$(RESET)"
+	@$(MAKE) -C libft clean > /dev/null
+	@rm -rf $(OBJS_DIR)
+	@echo "$(GREEN)Clean done!$(RESET)"
 
 fclean: clean
-						${RM} ${NAME}
-						@echo "$(RED)fclean libft$(END)"
-						$(MAKE) --no-print-directory fclean -C ./libft/
-						@echo "$(GREEN)$(BOLD_START)Fclean done$(BOLD_END)$(END)"
+	@echo "$(YELLOW)Full cleanup...$(RESET)"
+	@$(MAKE) -C libft fclean > /dev/null
+	@rm -f $(NAME)
+	@echo "$(GREEN)Full cleanup done!$(RESET)"
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus libft
-.SILENT:
+.PHONY: all clean fclean re
+
+-include $(DEPS)
