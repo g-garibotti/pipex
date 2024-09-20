@@ -1,20 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error_handling.c                                   :+:      :+:    :+:   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/19 16:53:45 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/19 16:57:02 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/09/20 17:56:29 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/09/20 17:56:44 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../includes/pipex.h"
 
-/*
-function	free_and_exit(pipex,
-		message) free pipex structure if message is not NULL print error message exit with appropriate status
+char *ft_getenv(const char *name)
+{
+    extern char **environ;
+    int i;
+    size_t len;
 
-	function free_command_list(pipex) iterate through pipex structure free all allocated memory
-*/
+    len = ft_strlen(name);
+    i = 0;
+    while (environ[i])
+    {
+        if (ft_strncmp(environ[i], name, len) == 0 && environ[i][len] == '=')
+            return (&environ[i][len + 1]);
+        i++;
+    }
+    return (NULL);
+}

@@ -6,78 +6,56 @@
 #    By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/18 13:09:24 by ggaribot          #+#    #+#              #
-#    Updated: 2024/09/18 13:15:05 by ggaribot         ###   ########.fr        #
+#    Updated: 2024/09/20 17:37:48 by ggaribot         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Colors
-GREEN = \033[0;32m
-YELLOW = \033[0;33m
-RED = \033[0;31m
-BLUE = \033[0;34m
-RESET = \033[0m
-
-NAME = pipex
+# Compiler and flags
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-# Source files
-SRCS_DIR = srcs
-MAIN_SRCS = main.c
-PARSING_SRCS = parse_args.c
-EXECUTION_SRCS = execute_commands.c
-UTILS_SRCS = error_handling.c
+# Directories
+SRC_DIR = srcs
+OBJ_DIR = objs
+INC_DIR = includes
+LIBFT_DIR = libft
 
-SRCS = $(addprefix $(SRCS_DIR)/main/, $(MAIN_SRCS)) \
-       $(addprefix $(SRCS_DIR)/parsing/, $(PARSING_SRCS)) \
-       $(addprefix $(SRCS_DIR)/execution/, $(EXECUTION_SRCS)) \
-       $(addprefix $(SRCS_DIR)/utils/, $(UTILS_SRCS))
+# Source files
+SRCS = $(wildcard $(SRC_DIR)/*.c)
 
 # Object files
-OBJS_DIR = objs
-OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
+OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-# Dependencies
-DEPS = $(OBJS:.o=.d)
+# Executable name
+NAME = pipex
 
 # Libft
-LIBFT = libft/libft.a
+LIBFT = $(LIBFT_DIR)/libft.a
 
+# Includes
+INC = -I$(INC_DIR) -I$(LIBFT_DIR)
+
+# Rules
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT)
-    @$(CC) $(CFLAGS) $(OBJS) -Llibft -lft -o $(NAME)
-    @echo "$(BLUE)$(NAME) created!$(RESET)"
+$(NAME): $(LIBFT) $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_DIR) -lft -o $@
 
-$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
-    @mkdir -p $(@D)
-    @printf "$(YELLOW)Compiling $<... $(RESET)"
-    @if $(CC) $(CFLAGS) -MMD -MP -I./includes -Ilibft -c $< -o $@ 2>/dev/null; then \
-        printf "$(GREEN)Done!$(RESET)\n"; \
-    else \
-        printf "$(RED)Failed!$(RESET)\n"; \
-        exit 1; \
-    fi
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
 $(LIBFT):
-    @echo "$(YELLOW)Compiling libft...$(RESET)"
-    @$(MAKE) -C libft > /dev/null 2>&1
-    @echo "$(GREEN)libft compilation done!$(RESET)"
+	@make -C $(LIBFT_DIR)
 
 clean:
-    @echo "$(YELLOW)Cleaning up...$(RESET)"
-    @$(MAKE) -C libft clean > /dev/null
-    @rm -rf $(OBJS_DIR)
-    @echo "$(GREEN)Clean done!$(RESET)"
+	@make -C $(LIBFT_DIR) clean
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
-    @echo "$(YELLOW)Full cleanup...$(RESET)"
-    @$(MAKE) -C libft fclean > /dev/null
-    @rm -f $(NAME)
-    @echo "$(GREEN)Full cleanup done!$(RESET)"
+	@make -C $(LIBFT_DIR) fclean
+	rm -f $(NAME)
 
 re: fclean all
 
 .PHONY: all clean fclean re
-
--include $(DEPS)
