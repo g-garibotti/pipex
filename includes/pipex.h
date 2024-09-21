@@ -6,7 +6,7 @@
 /*   By: genarogaribotti <genarogaribotti@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:18:52 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/21 13:40:21 by genarogarib      ###   ########.fr       */
+/*   Updated: 2024/09/21 14:35:27 by genarogarib      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct s_pipex
     char    **argv;
     char    **envp;
     pid_t   pid;
+    pid_t   parent_pid;
     int     *pipe;
     int     cmd_count;
 } t_pipex;

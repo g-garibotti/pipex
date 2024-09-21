@@ -6,7 +6,7 @@
 /*   By: genarogaribotti <genarogaribotti@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 13:31:19 by genarogarib       #+#    #+#             */
-/*   Updated: 2024/09/21 13:42:31 by genarogarib      ###   ########.fr       */
+/*   Updated: 2024/09/21 14:34:59 by genarogarib      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ static void free_string_array(char **arr)
 void close_pipes(t_pipex *pipex)
 {
     int i;
+
+    if (!pipex->pipe)
+        return;
 
     i = 0;
     while (i < (pipex->cmd_count - 1) * 2)
@@ -62,7 +65,7 @@ void error_exit(t_pipex *pipex, char *error_message)
     if (error_message)
         ft_putendl_fd(error_message, 2);
 
-    if (pipex)
+    if (pipex && getpid() == pipex->parent_pid)
         cleanup_pipex(pipex);
 
     exit(1);
@@ -70,7 +73,14 @@ void error_exit(t_pipex *pipex, char *error_message)
 
 void child_free(t_pipex *pipex)
 {
-    free_string_array(pipex->cmd_args);
+    if (pipex->cmd_args)
+    {
+        free_string_array(pipex->cmd_args);
+        pipex->cmd_args = NULL;
+    }
     if (pipex->cmd)
+    {
         free(pipex->cmd);
+        pipex->cmd = NULL;
+    }
 }

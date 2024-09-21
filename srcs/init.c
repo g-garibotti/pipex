@@ -6,7 +6,7 @@
 /*   By: genarogaribotti <genarogaribotti@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 12:49:13 by genarogarib       #+#    #+#             */
-/*   Updated: 2024/09/21 13:41:25 by genarogarib      ###   ########.fr       */
+/*   Updated: 2024/09/21 14:29:15 by genarogarib      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,16 @@ void init_pipex(t_pipex *pipex, int argc, char **argv, char **envp)
 
     pipex->infile = open(argv[1], O_RDONLY);
     if (pipex->infile < 0)
-        error_exit(pipex, "Error: Cannot open input file");
+        error_exit(pipex, "Error opening input file");
     pipex->outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (pipex->outfile < 0)
-        error_exit(pipex, "Error: Cannot open output file");
+        error_exit(pipex, "Error opening output file");
     path = find_path(envp);
     if (!path)
         error_exit(pipex, "Error: PATH not found in environment");
     pipex->cmd_paths = ft_split(path, ':');
+    if (!pipex->cmd_paths)
+        error_exit(pipex, "Error: Memory allocation failed for cmd_paths");
     pipex->cmd_count = argc - 3;
     pipex->envp = envp;
 }

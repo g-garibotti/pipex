@@ -6,7 +6,7 @@
 /*   By: genarogaribotti <genarogaribotti@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 12:56:09 by genarogarib       #+#    #+#             */
-/*   Updated: 2024/09/21 13:41:52 by genarogarib      ###   ########.fr       */
+/*   Updated: 2024/09/21 14:34:11 by genarogarib      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ static char *get_cmd(char **paths, char *cmd)
 static void child_process(t_pipex pipex, char **argv, int i)
 {
     pipex.cmd_args = ft_split(argv[i + 2], ' ');
+    if (!pipex.cmd_args)
+        error_exit(&pipex, "Error: Memory allocation failed for cmd_args");
+
     pipex.cmd = get_cmd(pipex.cmd_paths, pipex.cmd_args[0]);
     if (!pipex.cmd)
     {
@@ -64,10 +67,16 @@ void execute_pipex(t_pipex *pipex)
     int i;
 
     i = 0;
-    while (i < pipex->cmd_count)
+    while (i < pipex->cmd_count - 1)
     {
         if (pipe(pipex->pipe + 2 * i) < 0)
             error_exit(pipex, "Error: Pipe creation failed");
+        i++;
+    }
+
+    i = 0;
+    while (i < pipex->cmd_count)
+    {
         pipex->pid = fork();
         if (pipex->pid < 0)
             error_exit(pipex, "Error: Fork failed");
