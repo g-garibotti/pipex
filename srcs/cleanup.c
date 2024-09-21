@@ -3,62 +3,74 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: genarogaribotti <genarogaribotti@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 17:46:34 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/20 17:46:42 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/09/21 13:31:19 by genarogarib       #+#    #+#             */
+/*   Updated: 2024/09/21 13:42:31 by genarogarib      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-t_pipex g_pipex;
-
-static void close_fds(void)
-{
-    if (g_pipex.infile > 2)
-        close(g_pipex.infile);
-    if (g_pipex.outfile > 2)
-        close(g_pipex.outfile);
-    if (g_pipex.pipe_fd[0] > 2)
-        close(g_pipex.pipe_fd[0]);
-    if (g_pipex.pipe_fd[1] > 2)
-        close(g_pipex.pipe_fd[1]);
-}
-
-static void free_memory(void)
+static void free_string_array(char **arr)
 {
     int i;
 
-    if (g_pipex.cmd_paths)
+    if (!arr)
+        return;
+    i = 0;
+    while (arr[i])
     {
-        i = 0;
-        while (g_pipex.cmd_paths[i])
-        {
-            free(g_pipex.cmd_paths[i]);
-            i++;
-        }
-        free(g_pipex.cmd_paths);
+        free(arr[i]);
+        i++;
     }
-    if (g_pipex.cmd_args)
+    free(arr);
+}
+
+void close_pipes(t_pipex *pipex)
+{
+    int i;
+
+    i = 0;
+    while (i < (pipex->cmd_count - 1) * 2)
     {
-        i = 0;
-        while (g_pipex.cmd_args[i])
-        {
-            free(g_pipex.cmd_args[i]);
-            i++;
-        }
-        free(g_pipex.cmd_args);
+        close(pipex->pipe[i]);
+        i++;
     }
 }
 
-void cleanup_and_exit(char *error_message)
+void cleanup_pipex(t_pipex *pipex)
+{
+    if (pipex->infile > 0)
+        close(pipex->infile);
+    if (pipex->outfile > 0)
+        close(pipex->outfile);
+    
+    close_pipes(pipex);
+    
+    free_string_array(pipex->cmd_paths);
+    free_string_array(pipex->cmd_args);
+    
+    if (pipex->pipe)
+        free(pipex->pipe);
+    if (pipex->cmd)
+        free(pipex->cmd);
+}
+
+void error_exit(t_pipex *pipex, char *error_message)
 {
     if (error_message)
         ft_putendl_fd(error_message, 2);
-    close_fds();
-    free_memory();
-    if (g_pipex.here_doc)
-        unlink(".heredoc_tmp");
-    exit(EXIT_FAILURE);
+
+    if (pipex)
+        cleanup_pipex(pipex);
+
+    exit(1);
+}
+
+void child_free(t_pipex *pipex)
+{
+    free_string_array(pipex->cmd_args);
+    if (pipex->cmd)
+        free(pipex->cmd);
 }

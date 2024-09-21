@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: genarogaribotti <genarogaribotti@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:18:52 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/20 17:56:43 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/21 13:40:21 by genarogarib      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,27 +20,26 @@
 # include <stdio.h>
 # include "../libft/libft.h"
 
-/* Global variables */
 typedef struct s_pipex
 {
     int     infile;
     int     outfile;
     char    **cmd_paths;
     char    **cmd_args;
-    char    **envp;  // Add this line
+    char    *cmd;
+    char    **argv;
+    char    **envp;
     pid_t   pid;
-    int     pipe_fd[2];
+    int     *pipe;
     int     cmd_count;
-    int     here_doc;
 } t_pipex;
 
-extern t_pipex g_pipex;
-
 /* Function prototypes */
-void    parse_args(int argc, char **argv);
-void    execute_commands(char **argv);
-void    handle_heredoc(char *limiter);
-void    cleanup_and_exit(char *error_message);
-char *ft_getenv(const char *name);
+void    init_pipex(t_pipex *pipex, int argc, char **argv, char **envp);
+void    execute_pipex(t_pipex *pipex);
+void    cleanup_pipex(t_pipex *pipex);
+void    close_pipes(t_pipex *pipex);
+void    error_exit(t_pipex *pipex, char *error_message);
+void    child_free(t_pipex *pipex);
 
 #endif
