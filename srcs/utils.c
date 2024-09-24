@@ -1,29 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 17:38:09 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/24 17:14:59 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/09/24 16:55:50 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/09/24 17:04:03 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-int	main(int argc, char **argv, char **envp)
+void	free_string_array(char **arr)
 {
-	t_pipex	pipex;
+	int	i;
 
-	if (argc < 5 || argc > MAX_ARGS)
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
 	{
-		ft_putendl_fd("Error: Invalid number of arguments", 2);
-		return (1);
+		free(arr[i]);
+		i++;
 	}
-	ft_memset(&pipex, 0, sizeof(t_pipex));
-	init_pipex(&pipex, argc, argv, envp);
-	execute_pipex(&pipex);
-	cleanup_pipex(&pipex);
-	return (0);
+	free(arr);
+}
+
+char	*get_cmd(char **paths, char *cmd)
+{
+	char	*tmp;
+	char	*command;
+
+	while (*paths)
+	{
+		tmp = ft_strjoin(*paths, "/");
+		command = ft_strjoin(tmp, cmd);
+		free(tmp);
+		if (access(command, 0) == 0)
+			return (command);
+		free(command);
+		paths++;
+	}
+	return (NULL);
 }
