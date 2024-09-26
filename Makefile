@@ -6,7 +6,7 @@
 #    By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/18 13:09:24 by ggaribot          #+#    #+#              #
-#    Updated: 2024/09/20 17:37:48 by ggaribot         ###   ########.fr        #
+#    Updated: 2024/09/26 12:06:13 by ggaribot         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ INC_DIR = includes
 LIBFT_DIR = libft
 
 # Source files
-SRCS = $(wildcard $(SRC_DIR)/*.c)
+SRC_FILES = cleanup.c execute.c heredoc.c init.c pipex.c process.c utils.c
+SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 
 # Object files
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

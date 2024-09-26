@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 13:31:19 by genarogarib       #+#    #+#             */
-/*   Updated: 2024/09/24 17:03:53 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/26 11:42:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	cleanup_pipex(t_pipex *pipex)
 		free_string_array(pipex->cmd_args);
 	if (pipex->cmd)
 		free(pipex->cmd);
+	if (pipex->heredoc_mode)
+		unlink(HEREDOC_TMP);
 }
 
 void	error_exit(t_pipex *pipex, char *error_message)

@@ -5,20 +5,20 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/24 17:12:51 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/24 17:13:10 by ggaribot         ###   ########.fr       */
+/*   Created: 2024/09/26 11:37:30 by ggaribot          #+#    #+#             */
+/*   Updated: 2024/09/26 11:45:46 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/pipex.h"
 
-static void	write_to_pipe(int fd, char *limiter)
+static void	write_heredoc(int tmp_fd, char *limiter)
 {
 	char	*line;
 
 	while (1)
 	{
-		ft_putstr_fd("heredoc> ", 1);
+		ft_putstr_fd("> ", 1);
 		line = get_next_line(0);
 		if (!line)
 			break ;
@@ -28,19 +28,21 @@ static void	write_to_pipe(int fd, char *limiter)
 			free(line);
 			break ;
 		}
-		ft_putstr_fd(line, fd);
+		ft_putstr_fd(line, tmp_fd);
 		free(line);
 	}
 }
 
-void	handle_heredoc(t_pipex *pipex, char *limiter)
+void	handle_heredoc(t_pipex *pipex)
 {
-	int	heredoc_pipe[2];
+	int	tmp_fd;
 
-	if (pipe(heredoc_pipe) < 0)
-		error_exit(pipex, "Error: Heredoc pipe creation failed");
-	write_to_pipe(heredoc_pipe[1], limiter);
-	close(heredoc_pipe[1]);
-	pipex->infile = heredoc_pipe[0];
-	pipex->is_heredoc = 1;
+	tmp_fd = open(HEREDOC_TMP, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (tmp_fd < 0)
+		error_exit(pipex, "Failed to create temporary heredoc file");
+	write_heredoc(tmp_fd, pipex->limiter);
+	close(tmp_fd);
+	pipex->infile = open(HEREDOC_TMP, O_RDONLY);
+	if (pipex->infile < 0)
+		error_exit(pipex, "Failed to open temporary heredoc file");
 }
