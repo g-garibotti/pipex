@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/17 14:18:52 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/26 12:01:16 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/27 16:58:50 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,6 @@ void		free_string_array(char **arr);
 char		*get_cmd(char **paths, char *cmd);
 void		handle_heredoc(t_pipex *pipex);
 void		child_process(t_pipex *pipex, int i);
+char		*ft_strjoin_pipex(char const *s1, char const *s2);
 
 #endif
