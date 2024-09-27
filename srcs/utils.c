@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 16:55:50 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/27 17:00:26 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/27 17:48:17 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,18 @@ char	*get_cmd(char **paths, char *cmd)
 
 	if (!cmd)
 		return (NULL);
+	if (cmd[0] == '/' || ft_strncmp(cmd, "./", 2) == 0)
+	{
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		return (NULL);
+	}
 	while (*paths)
 	{
 		tmp = ft_strjoin(*paths, "/");
 		command = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (access(command, 0) == 0)
+		if (access(command, X_OK) == 0)
 			return (command);
 		free(command);
 		paths++;

@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 12:00:35 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/27 16:59:51 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/27 17:48:57 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,11 @@ static void	setup_command(t_pipex *pipex, int i)
 		cleanup_pipex(pipex);
 		error_exit(pipex, "Error: Empty command");
 	}
-	pipex->cmd = get_cmd(pipex->cmd_paths, pipex->cmd_args[0]);
+	if (pipex->cmd_args[0][0] == '/' || ft_strncmp(pipex->cmd_args[0], "./",
+			2) == 0)
+		pipex->cmd = ft_strdup(pipex->cmd_args[0]);
+	else
+		pipex->cmd = get_cmd(pipex->cmd_paths, pipex->cmd_args[0]);
 	if (!pipex->cmd)
 	{
 		cleanup_pipex(pipex);
