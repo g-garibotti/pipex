@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 12:00:35 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/30 15:32:54 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/30 16:13:01 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ static void	redirect_io(t_pipex *pipex, int i)
 {
 	if (i == 0)
 	{
-		dup2(pipex->infile, STDIN_FILENO);
+		if (pipex->infile >= 0)
+			dup2(pipex->infile, STDIN_FILENO);
 		dup2(pipex->pipe[1], STDOUT_FILENO);
 	}
 	else if (i == pipex->cmd_count - 1)
@@ -73,14 +74,22 @@ static void	setup_command(t_pipex *pipex, int i)
 
 void	child_process(t_pipex *pipex, int i)
 {
+	int	dev_null;
+
 	setup_command(pipex, i);
 	close_unused_fds(pipex, i);
+	redirect_io(pipex, i);
 	if (i == 0 && pipex->infile < 0)
 	{
-		cleanup_pipex(pipex);
-		exit(1);
+		dev_null = open("/dev/null", O_RDONLY);
+		if (dev_null < 0)
+		{
+			cleanup_pipex(pipex);
+			error_exit(pipex, "Error: Failed to open /dev/null");
+		}
+		dup2(dev_null, STDIN_FILENO);
+		close(dev_null);
 	}
-	redirect_io(pipex, i);
 	execve(pipex->cmd, pipex->cmd_args, pipex->envp);
 	cleanup_pipex(pipex);
 	error_exit(pipex, "Error: Command execution failed");
