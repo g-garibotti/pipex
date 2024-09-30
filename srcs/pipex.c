@@ -6,7 +6,7 @@
 /*   By: ggaribot <ggaribot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:38:09 by ggaribot          #+#    #+#             */
-/*   Updated: 2024/09/26 11:47:15 by ggaribot         ###   ########.fr       */
+/*   Updated: 2024/09/30 15:06:15 by ggaribot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	main(int argc, char **argv, char **envp)
 				8) == 0 && argc < 6))
 	{
 		ft_putendl_fd("Error: Invalid number of arguments", 2);
-		ft_putendl_fd("Usage: ./pipex file1 cmd1 cmd2 ... cmdn file2", 2);
+		ft_putendl_fd("Usage: ./pipex file cmd cmd1 ... cmdn file1", 2);
 		ft_putendl_fd("   or: ./pipex here_doc LIMITER cmd cmd1 file", 2);
 		return (1);
 	}
