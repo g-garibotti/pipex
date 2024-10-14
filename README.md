@@ -94,7 +94,4 @@ This will execute `ls -l`, pipe its output to `wc -l`, and write the result to `
 3. **Challenge**: Proper cleanup of resources in case of errors.
    **Solution**: Implemented a robust cleanup function that frees all allocated memory and closes file descriptors.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
